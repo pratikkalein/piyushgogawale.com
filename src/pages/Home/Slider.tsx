@@ -67,7 +67,7 @@ export const ImageSlider = () => {
       </div>
 
       {/* Custom Controls */}
-      <div className="flex justify-center items-center gap-2 md:gap-4 mt-2 md:mt-6 mb-0 md:mb-4 pb-0">
+      <div className="flex justify-center items-center gap-2 md:gap-4 mt-2 md:mt-6 mb-4 md:mb-4">
         <Button
           variant="outline"
           size="icon"

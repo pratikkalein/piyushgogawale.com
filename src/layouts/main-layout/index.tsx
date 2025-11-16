@@ -194,11 +194,11 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-          <main className="px-4 pt-4 pb-0 lg:p-8 flex-1 overflow-hidden min-h-0">{children}</main>
+        <div className="flex-1 min-w-0 flex flex-col overflow-y-auto lg:overflow-hidden">
+          <main className="px-4 pt-4 pb-0 lg:p-8 lg:flex-1 min-h-0">{children}</main>
 
           {/* Mobile Footer */}
-          <footer className="lg:hidden py-2 px-4">
+          <footer className="lg:hidden py-2 px-4 flex-shrink-0">
             <div className="flex justify-center mb-1">
               <Separator className="w-[80%]" />
             </div>
