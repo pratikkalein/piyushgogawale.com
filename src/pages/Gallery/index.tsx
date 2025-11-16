@@ -1,7 +1,7 @@
 import { useParams, Navigate } from "react-router-dom";
 import { Typography } from "@/components/ui/typography";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
-import { getCategory, galleryData } from "@/data/galleryData";
+import { getCategory } from "@/data/galleryData";
 import type { CategoryName } from "@/data/galleryData";
 
 const Gallery = () => {

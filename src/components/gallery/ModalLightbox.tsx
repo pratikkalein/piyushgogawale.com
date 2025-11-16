@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogOverlay,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
