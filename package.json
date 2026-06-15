@@ -59,6 +59,10 @@
       "dompurify@<3.3.2": ">=3.3.2",
       "esbuild@<0.28.1": ">=0.28.1",
       "postcss@<8.5.10": ">=8.5.10"
+    },
+    "supportedArchitectures": {
+      "os": ["current", "linux"],
+      "cpu": ["current", "x64", "arm64"]
     }
   }
 }
