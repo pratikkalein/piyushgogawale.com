@@ -61,8 +61,8 @@ const nextConfig: NextConfig = {
   // causing "libvips-cpp.so: cannot open shared object file" on Vercel.
   outputFileTracingIncludes: {
     '/**': [
-      './node_modules/.pnpm/@img+sharp-linux-x64@*/**',
-      './node_modules/.pnpm/@img+sharp-libvips-linux-x64@*/**',
+      './node_modules/@img/sharp-linux-x64/**',
+      './node_modules/@img/sharp-libvips-linux-x64/**',
     ],
   },
   // Keep functions under Vercel's 250MB unzipped limit: drop build-only tooling
@@ -70,18 +70,18 @@ const nextConfig: NextConfig = {
   // uses. None of these are needed at request time.
   outputFileTracingExcludes: {
     '/**': [
-      'node_modules/.pnpm/typescript@*/**',
-      'node_modules/.pnpm/drizzle-kit@*/**',
-      'node_modules/.pnpm/esbuild@*/**',
-      'node_modules/.pnpm/@esbuild+*/**',
-      'node_modules/.pnpm/monaco-editor@*/**',
-      'node_modules/.pnpm/@img+sharp-darwin*/**',
-      'node_modules/.pnpm/@img+sharp-libvips-darwin*/**',
-      'node_modules/.pnpm/@img+sharp-win32*/**',
-      'node_modules/.pnpm/@img+sharp-linuxmusl*/**',
-      'node_modules/.pnpm/@img+sharp-libvips-linuxmusl*/**',
-      'node_modules/.pnpm/@img+sharp-linux-arm64*/**',
-      'node_modules/.pnpm/@img+sharp-libvips-linux-arm64*/**',
+      'node_modules/typescript/**',
+      'node_modules/drizzle-kit/**',
+      'node_modules/esbuild/**',
+      'node_modules/@esbuild/**',
+      'node_modules/monaco-editor/**',
+      'node_modules/@img/sharp-darwin*/**',
+      'node_modules/@img/sharp-libvips-darwin*/**',
+      'node_modules/@img/sharp-win32*/**',
+      'node_modules/@img/sharp-linuxmusl*/**',
+      'node_modules/@img/sharp-libvips-linuxmusl*/**',
+      'node_modules/@img/sharp-linux-arm64*/**',
+      'node_modules/@img/sharp-libvips-linux-arm64*/**',
     ],
   },
   async headers() {
