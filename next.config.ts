@@ -38,15 +38,20 @@ const connectSrc = [
   .filter(Boolean)
   .join(' ')
 
+// Dev-only allowance so impeccable live mode (http://localhost:8400) can load.
+// Guarded by NODE_ENV, so it never appears in production.
+const __impeccableLiveDev =
+  process.env.NODE_ENV === 'development' ? ' http://localhost:8400' : ''
+
 // CSP permissive enough for the Payload admin (inline styles, eval, blob workers)
 // while restricting the public surface.
 const csp = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval'${__impeccableLiveDev}`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `img-src ${imgSrc}`,
   `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src ${connectSrc}`,
+  `connect-src ${connectSrc}${__impeccableLiveDev}`,
   `media-src 'self' ${r2Host ? `https://${r2Host}` : ''}`.trim(),
   `frame-ancestors 'none'`,
   `base-uri 'self'`,

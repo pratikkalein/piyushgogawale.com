@@ -26,7 +26,10 @@ export const Footer = ({
         <ul className="mt-4 flex flex-col gap-2">
           {links.map((l) => (
             <li key={l.href + l.label}>
-              <Link href={l.href} className="text-sm text-primary">
+              <Link
+                href={l.href}
+                className="text-sm text-charcoal transition-colors hover:text-primary"
+              >
                 {l.label}
               </Link>
             </li>
@@ -44,7 +47,7 @@ export const Footer = ({
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-primary"
+                  className="text-sm text-charcoal transition-colors hover:text-primary"
                 >
                   {s.label}
                 </a>

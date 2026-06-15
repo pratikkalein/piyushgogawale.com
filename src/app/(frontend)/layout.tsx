@@ -41,8 +41,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
       <body className="flex min-h-screen flex-col">
+        <a
+          href="#content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-on-dark"
+        >
+          Skip to content
+        </a>
         <Nav title={title} links={navLinks} />
-        <main className="flex-1">{children}</main>
+        <main id="content" className="flex-1">
+          {children}
+        </main>
         <SunsetBand />
         <Footer title={title} links={navLinks} social={social} />
       </body>

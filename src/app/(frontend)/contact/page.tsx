@@ -65,6 +65,7 @@ export default function ContactPage() {
               type="text"
               required
               maxLength={120}
+              autoComplete="name"
               className="h-11 rounded-md border border-hairline-strong bg-canvas px-3 text-ink outline-none focus:border-2 focus:border-primary"
             />
           </Field>
@@ -74,6 +75,8 @@ export default function ContactPage() {
               type="email"
               required
               maxLength={200}
+              autoComplete="email"
+              inputMode="email"
               className="h-11 rounded-md border border-hairline-strong bg-canvas px-3 text-ink outline-none focus:border-2 focus:border-primary"
             />
           </Field>
@@ -95,12 +98,19 @@ export default function ContactPage() {
             {status === 'submitting' ? 'Sending…' : 'Send message'}
           </button>
 
+          <p role="status" aria-live="polite" className="sr-only">
+            {status === 'submitting' ? 'Sending your message' : ''}
+          </p>
           {status === 'success' && (
-            <p className="text-sm font-medium text-primary">
+            <p role="status" aria-live="polite" className="text-sm font-medium text-primary">
               Thanks — your message has been sent.
             </p>
           )}
-          {status === 'error' && <p className="text-sm font-medium text-sunshine-900">{error}</p>}
+          {status === 'error' && (
+            <p role="alert" className="text-sm font-medium text-sunshine-900">
+              {error}
+            </p>
+          )}
         </div>
       </form>
     </section>
