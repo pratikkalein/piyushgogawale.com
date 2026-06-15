@@ -75,6 +75,36 @@ On Vercel, the `vercel-build` script runs `payload migrate` automatically before
    section shows in the home carousel, a contact submission saves + emails, and
    security headers are present (`curl -I https://yourdomain`).
 
+## Image uploads (client uploads + R2 CORS) — required
+
+Vercel serverless functions reject request bodies over **4.5MB**, so normal-sized
+photos can't be uploaded through the server. The S3 plugin is configured with
+`clientUploads: true`, so the browser uploads **directly to R2** via a presigned
+URL, bypassing that limit.
+
+For this to work you must add a **CORS policy** to the R2 bucket allowing `PUT`
+from your site. In Cloudflare → R2 → your bucket → **Settings → CORS Policy**,
+add (replace origins with your real domains):
+
+```json
+[
+  {
+    "AllowedOrigins": [
+      "https://piyushgogawale.com",
+      "https://www.piyushgogawale.com",
+      "http://localhost:3000"
+    ],
+    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+Without this, uploads fail with a CORS error in the browser console. (The app's
+CSP already permits the browser to connect to the R2 endpoints.)
+
 ## Activate FormSubmit (once, after deploy)
 
 1. Set `CONTACT_ALIAS` to the photographer's raw email and deploy.

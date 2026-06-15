@@ -25,6 +25,11 @@ const publicBase = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
 const storagePlugins: Plugin[] = process.env.S3_BUCKET
   ? [
       s3Storage({
+        // Upload directly from the browser to R2 via a presigned URL. This
+        // bypasses Vercel's 4.5MB serverless request-body limit, which otherwise
+        // breaks uploads of normal-sized photos. Requires CORS (PUT) on the
+        // bucket allowing the site origin — see README.
+        clientUploads: true,
         collections: {
           media: {
             prefix: 'media',

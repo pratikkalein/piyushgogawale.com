@@ -15,7 +15,26 @@ try {
   r2Host = undefined
 }
 
+// R2 S3 API host (presigned client uploads PUT here) — allow both the exact
+// account endpoint and the generic R2 S3 host as a fallback.
+let s3Host: string | undefined
+try {
+  if (process.env.S3_ENDPOINT) s3Host = new URL(process.env.S3_ENDPOINT).hostname
+} catch {
+  s3Host = undefined
+}
+
 const imgSrc = ["'self'", 'data:', 'blob:', r2Host ? `https://${r2Host}` : '']
+  .filter(Boolean)
+  .join(' ')
+
+// Hosts the browser connects to for client-side uploads + image reads.
+const connectSrc = [
+  "'self'",
+  r2Host ? `https://${r2Host}` : '',
+  s3Host ? `https://${s3Host}` : '',
+  'https://*.r2.cloudflarestorage.com',
+]
   .filter(Boolean)
   .join(' ')
 
@@ -27,7 +46,7 @@ const csp = [
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `img-src ${imgSrc}`,
   `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src 'self'`,
+  `connect-src ${connectSrc}`,
   `media-src 'self' ${r2Host ? `https://${r2Host}` : ''}`.trim(),
   `frame-ancestors 'none'`,
   `base-uri 'self'`,
