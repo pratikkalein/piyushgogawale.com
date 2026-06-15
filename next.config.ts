@@ -54,6 +54,18 @@ const nextConfig: NextConfig = {
     localPatterns: [{ pathname: '/api/media/file/**' }],
     remotePatterns: r2Host ? [{ protocol: 'https', hostname: r2Host }] : [],
   },
+  // Load sharp from node_modules at runtime (not bundled)...
+  serverExternalPackages: ['sharp'],
+  // ...and force its native binaries + libvips .so into the serverless function
+  // output. Next's file tracing misses these because they're dlopen'd, which
+  // causes "libvips-cpp.so: cannot open shared object file" on Vercel.
+  outputFileTracingIncludes: {
+    '/**': [
+      './node_modules/.pnpm/@img+sharp-linux-x64*/**',
+      './node_modules/.pnpm/@img+sharp-libvips-linux-x64*/**',
+      './node_modules/.pnpm/sharp@*/**',
+    ],
+  },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },
