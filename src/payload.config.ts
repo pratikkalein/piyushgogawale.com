@@ -74,6 +74,10 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // Never auto-push schema (Payload's dev default). All schema changes go
+    // through committed migrations, so running `pnpm dev` against any database
+    // — including one pointed at prod via .env — can't silently drift it.
+    push: false,
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
