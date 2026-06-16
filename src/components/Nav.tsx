@@ -162,7 +162,8 @@ export const Nav = ({
       {/* ---------------------------------------------------------------- */}
       <header
         className="fixed inset-x-0 top-0 flex h-[var(--topbar-height)] items-center justify-between border-b border-hairline-strong bg-canvas pl-6 pr-2 lg:hidden"
-        style={{ zIndex: 'var(--z-drawer)' }}
+        // Sit above the drawer so the toggle stays visible as the close (X) button.
+        style={{ zIndex: 'calc(var(--z-overlay) + 1)' }}
       >
         <Link
           href="/"

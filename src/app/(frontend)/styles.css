@@ -138,6 +138,7 @@
   /* Layout shell — fixed sidebar grid (desktop) / fluid margin grid (mobile) */
   .site-shell {
     min-height: 100vh;
+    min-height: 100dvh; /* track the mobile address bar; vh above is the fallback */
     display: flex;
     flex-direction: column;
     padding-top: var(--topbar-height); /* mobile: clears the fixed top bar */
@@ -382,6 +383,22 @@
     opacity: 1;
     clip-path: inset(0 0 0 0);
   }
+}
+
+/* Scroll-down cue — a restrained vertical drift on the hero's down arrow. */
+@keyframes scrollCue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+.scroll-cue {
+  animation: scrollCue 1.9s var(--ease-out-quart) infinite;
 }
 
 /* Slow editorial drift on the active hero slide (photographic Ken Burns). */

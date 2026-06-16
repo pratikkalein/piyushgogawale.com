@@ -24,7 +24,7 @@ export const Gallery = ({ photos }: { photos: Photo[] }) => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
         {photos.map((photo, i) => (
           <Reveal key={photo.url + i} index={i % 3}>
             <button
