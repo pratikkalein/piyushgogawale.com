@@ -1,136 +1,401 @@
 @import 'tailwindcss';
 
 /* ----------------------------------------------------------------------------
-   Mistral visual language — design tokens (see DESIGN.md)
+   Monochrome Gallery — design tokens (see DESIGN.md)
+
+   Binary colour logic: black is every line, letter and intent; white is the
+   gallery wall. No off-whites, no creams. Depth is hairlines and stacking
+   order, never shadow. Every corner is 90 degrees.
 ---------------------------------------------------------------------------- */
 @theme {
-  /* Brand & accent */
-  --color-primary: #ff4f00;
-  --color-primary-deep: #e03e00;
-  --color-sunshine-300: #ffc56b;
-  --color-sunshine-500: #ff9a3d;
-  --color-sunshine-700: #ff6f1f;
-  --color-sunshine-800: #f2530a;
-  --color-sunshine-900: #d6400a;
-  --color-yellow-saturated: #ffc400;
+  /* Surface — the gallery wall */
+  --color-canvas: #ffffff; /* pure, clinical white */
+  --color-surface: #f5f5f5; /* hover / faint container separation */
+  --color-surface-2: #eeeeee; /* slightly stronger container */
 
-  /* Cream & warm neutral */
-  --color-cream: #fbf3e2;
-  --color-cream-soft: #fefaf1;
-  --color-cream-deeper: #f3e6cc;
-  --color-beige-deep: #e7d9be;
-
-  /* Surface */
-  --color-canvas: #ffffff;
-  --color-surface: #fafaf8;
-  --color-surface-cream: #fbf3e2;
-  --color-hairline: #e5e1d8;
-  --color-hairline-soft: #efebe2;
-  --color-hairline-strong: #d8d2c5;
-
-  /* Text */
-  --color-ink: #1a1a17;
-  --color-ink-tint: #2a2a26;
-  --color-charcoal: #33332e;
-  --color-slate: #5c5c54;
-  /* Darkened from DESIGN's #7a7a70 to clear WCAG AA (4.5:1) for small text on
-     both white and cream surfaces; the original failed (~3.9:1 on cream). */
-  --color-steel: #6e6e64;
-  --color-stone: #9a9a8e;
-  --color-muted: #b8b8ac;
-  --color-on-dark: #ffffff;
+  /* Ink — primary black + the meta-grey ramp */
+  --color-ink: #000000; /* type, icons, hairlines, intent */
+  --color-primary: #000000; /* legacy alias → ink */
+  --color-primary-deep: #1b1b1b; /* pressed / active ink */
   --color-on-primary: #ffffff;
+  --color-on-dark: #ffffff;
+  --color-charcoal: #1a1c1c; /* on-surface, body copy */
+  --color-slate: #4c4546; /* on-surface-variant, secondary body */
+  /* Catalogue grey for metadata + placeholders. #5e5e5e clears WCAG AA
+     (5.7:1) on white; DESIGN's prose #707070 only reaches ~4.0:1. */
+  --color-steel: #5e5e5e;
+  --color-stone: #7e7576; /* outline — large/decorative use only */
+  --color-muted: #cfc4c5; /* outline-variant — inactive indicators */
+
+  /* Hairlines — the only structural "depth" */
+  --color-hairline: rgba(0, 0, 0, 0.1); /* subtle divisions */
+  --color-hairline-soft: rgba(0, 0, 0, 0.08);
+  --color-hairline-strong: #000000; /* full-strength structural framing */
+  /* Legacy warm-neutral names remapped to the mono system so nothing leaks */
+  --color-cream: #f5f5f5;
+  --color-beige-deep: rgba(0, 0, 0, 0.12);
+
+  /* Error — the one sanctioned non-mono hue, used only for failures */
+  --color-error: #ba1a1a;
+  --color-error-deep: #93000a;
+  --color-sunshine-900: #93000a; /* legacy alias used by prose/error text */
 
   /* Fonts (CSS variables provided by next/font) */
-  --font-display: var(--font-fraunces), 'Times New Roman', Georgia, serif;
+  --font-display: var(--font-playfair), 'Times New Roman', Georgia, serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  /* Radii */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  /* Radii — strictly sharp. Every utility resolves to 0. */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
 
-  /* Elevation */
-  --shadow-subtle: rgba(0, 0, 0, 0.04) 0 1px 2px;
-  --shadow-card: rgba(0, 0, 0, 0.04) 0 4px 12px;
-  --shadow-image: rgba(0, 0, 0, 0.08) 0 12px 24px -4px;
-  --shadow-modal: rgba(0, 0, 0, 0.12) 0 16px 48px -8px;
+  /* Elevation — there is none. Tokens kept as `none` so any stray
+     shadow utility collapses to flat. */
+  --shadow-subtle: none;
+  --shadow-card: none;
+  --shadow-image: none;
+  --shadow-modal: none;
+
+  /* Layout */
+  --sidebar-width: 240px;
+  --topbar-height: 60px;
+  --margin-desktop: 64px;
+  --margin-mobile: 24px;
+
+  /* Easing — exponential ease-out, the house curve */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Semantic z-index scale */
+  --z-progress: 70;
+  --z-sidebar: 50;
+  --z-drawer: 60;
+  --z-overlay: 80;
 }
 
 /* ----------------------------------------------------------------------------
-   Base
+   Base — element resets. Layered so per-element utilities can still override.
 ---------------------------------------------------------------------------- */
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Even line breaks on display/heading text; reduce orphans in long prose. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* Consistent, visible keyboard focus — black, to stay in the binary palette.
+     Elements on dark surfaces opt into a white ring via `focus-visible:outline-on-dark`. */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 0;
+  }
+  /* Underline inputs carry their own focus treatment, so suppress the ring. */
+  .field-underline:focus-visible {
+    outline: none;
+  }
 }
 
-html {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
+/* ----------------------------------------------------------------------------
+   Components — layered so Tailwind utilities (later layer) can override colour,
+   spacing, width, etc. on a per-instance basis.
+---------------------------------------------------------------------------- */
+@layer components {
+  /* Layout shell — fixed sidebar grid (desktop) / fluid margin grid (mobile) */
+  .site-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--topbar-height); /* mobile: clears the fixed top bar */
+  }
+
+  /* Editorial display face */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+
+  /* Catalogue label — nav metadata, image data, eyebrows-as-data */
+  .label-caps {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+
+  /* headline-md — section + page titles */
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.2;
+    font-size: clamp(2rem, 1.4rem + 2.5vw, 2.5rem); /* 32 → 40px */
+    letter-spacing: -0.01em;
+  }
+
+  /* display-lg — hero / project titles. Heavy Playfair, tight kerning. */
+  .hero-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-size: clamp(2.75rem, 1.4rem + 5.6vw, 5.25rem); /* 44 → 84px */
+    animation: heroRise 800ms var(--ease-out-expo) both;
+  }
+
+  /* Buttons — solid black, outline, or inverted (for dark surfaces). Hover is a
+     clean colour inversion. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7em;
+    height: 48px;
+    padding: 0 28px;
+    border: 1px solid var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.3s var(--ease-out-expo),
+      color 0.3s var(--ease-out-expo);
+  }
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-on-primary);
+  }
+  .btn-primary:hover {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-ink);
+  }
+  .btn-outline:hover {
+    background: var(--color-ink);
+    color: var(--color-on-primary);
+  }
+  /* Inverted — a white button for black/photographic surfaces. */
+  .btn-invert {
+    border-color: var(--color-on-dark);
+    background: var(--color-on-dark);
+    color: var(--color-ink);
+  }
+  .btn-invert:hover {
+    background: transparent;
+    color: var(--color-on-dark);
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-primary:disabled:hover {
+    background: var(--color-ink);
+    color: var(--color-on-primary);
+  }
+
+  /* Input fields — minimalist 1px underline, no box. */
+  .field-underline {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid var(--color-ink);
+    background: transparent;
+    padding: 0.65rem 0;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    color: var(--color-charcoal);
+    transition: border-color 0.2s ease;
+  }
+  .field-underline::placeholder {
+    color: var(--color-steel);
+  }
+  .field-underline:focus {
+    outline: none;
+    border-bottom-width: 2px;
+  }
+
+  /* Animated hairline link — used for inline / nav-adjacent text links. */
+  .link-underline {
+    background-image: linear-gradient(var(--color-ink), var(--color-ink));
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s var(--ease-out-expo);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  /* Image hover — slow, restrained zoom inside a sharp frame. */
+  .img-zoom {
+    transition: transform 0.6s var(--ease-out-expo);
+  }
+  .group:hover .img-zoom {
+    transform: scale(1.04);
+  }
+
+  /* Rich text (lexical HTML) — monochrome editorial */
+  .prose-editorial {
+    max-width: 65ch;
+  }
+  .prose-editorial p {
+    margin: 0 0 1.3rem;
+    line-height: 1.75;
+    color: var(--color-charcoal);
+    text-wrap: pretty;
+  }
+  .prose-editorial h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.9rem;
+    line-height: 1.2;
+    margin: 2.5rem 0 1rem;
+  }
+  .prose-editorial h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.45rem;
+    line-height: 1.25;
+    margin: 1.75rem 0 0.75rem;
+  }
+  .prose-editorial a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .prose-editorial ul,
+  .prose-editorial ol {
+    margin: 0 0 1.3rem;
+    padding-left: 1.4rem;
+  }
+  .prose-editorial li {
+    margin: 0.35rem 0;
+  }
+  .prose-editorial blockquote {
+    position: relative;
+    margin: 2.5rem 0;
+    padding: 0.25rem 0 0.25rem 1.75rem;
+    border-left: 1px solid var(--color-ink);
+    color: var(--color-charcoal);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+  .prose-editorial blockquote p {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+  }
 }
 
-body {
-  margin: 0;
-  background: var(--color-canvas);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
+/* Desktop: clear the fixed sidebar. (Unlayered media query so it reliably
+   beats the layered .site-shell base padding.) */
+@media (min-width: 1024px) {
+  .site-shell {
+    padding-top: 0;
+    padding-left: var(--sidebar-width);
+  }
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Even line breaks on display/heading text; reduce orphans in long prose. */
-h1,
-h2,
-h3 {
-  text-wrap: balance;
-}
-.prose-editorial p {
-  text-wrap: pretty;
-}
-
-/* Consistent, visible keyboard focus across every interactive element. */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-/* Inputs carry their own 2px primary border on focus, so suppress the ring. */
-input:focus-visible,
-textarea:focus-visible {
-  outline: none;
-}
-
-/* One orchestrated page-load reveal for the hero title (restrained, on-brand).
-   The default state is fully visible, so reduced-motion / headless renders
-   never hide it — the animation only plays forward when motion is allowed. */
+/* One orchestrated page-load reveal for the hero title. Default state is fully
+   visible, so reduced-motion / headless renders never hide it; the animation
+   only plays forward when motion is allowed. */
 @keyframes heroRise {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-.hero-display {
-  animation: heroRise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+/* ----------------------------------------------------------------------------
+   Motion — scroll reveal (gallery grids) + hero drift (carousel)
+
+   The hidden state is gated on `scripting: enabled`, so without JS the content
+   is always visible — the reveal enhances an already-visible default rather
+   than gating it blank. JS (IntersectionObserver) adds `.is-visible`.
+---------------------------------------------------------------------------- */
+@media (scripting: enabled) {
+  .reveal {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transition:
+      opacity 0.6s var(--ease-out-quart),
+      clip-path 0.9s var(--ease-out-quint);
+    transition-delay: calc(min(var(--reveal-i, 0), 8) * 70ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
 }
 
+/* Slow editorial drift on the active hero slide (photographic Ken Burns). */
+.kb {
+  transform: scale(1.02);
+  transition: transform 8s var(--ease-out-quart);
+}
+.kb-active {
+  transform: scale(1.08);
+}
+
+/* ----------------------------------------------------------------------------
+   Reduced motion — unlayered + !important so it always wins.
+---------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -143,66 +408,13 @@ textarea:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Editorial display face */
-.font-display {
-  font-family: var(--font-display);
-  font-weight: 400;
-}
-
-/* Hero title overlay (full-bleed photographic) */
-.hero-display {
-  font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -1.5px;
-  font-size: 84px;
-}
-@media (max-width: 1279px) {
-  .hero-display { font-size: 76px; }
-}
-@media (max-width: 1023px) {
-  .hero-display { font-size: 64px; }
-}
-@media (max-width: 767px) {
-  .hero-display { font-size: 52px; letter-spacing: -1px; }
-}
-@media (max-width: 479px) {
-  .hero-display { font-size: 40px; letter-spacing: -0.5px; }
-}
-
-/* Rich text (lexical HTML) */
-.prose-editorial p { margin: 0 0 1.2rem; line-height: 1.7; color: var(--color-charcoal); }
-.prose-editorial h2 { font-family: var(--font-sans); font-weight: 500; font-size: 28px; margin: 2rem 0 1rem; }
-.prose-editorial h3 { font-family: var(--font-sans); font-weight: 500; font-size: 22px; margin: 1.5rem 0 0.75rem; }
-/* Deeper sunset orange so inline links clear WCAG AA (4.57:1) on white;
-   bright --color-primary (#ff4f00) only reaches ~3.3:1 as text. */
-.prose-editorial a { color: var(--color-sunshine-900); text-decoration: underline; text-underline-offset: 2px; }
-.prose-editorial ul, .prose-editorial ol { margin: 0 0 1.2rem; padding-left: 1.4rem; }
-.prose-editorial li { margin: 0.3rem 0; }
-.prose-editorial blockquote {
-  position: relative;
-  margin: 2rem 0;
-  padding-top: 1.75rem;
-  color: var(--color-charcoal);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.4rem;
-  line-height: 1.4;
-}
-.prose-editorial blockquote::before {
-  content: '\201C';
-  position: absolute;
-  top: -0.4rem;
-  left: -0.1rem;
-  color: var(--color-primary);
-  font-family: var(--font-display);
-  font-size: 3rem;
-  line-height: 1;
-}
-.prose-editorial blockquote p {
-  font: inherit;
-  color: inherit;
-  margin: 0;
+  /* Reveals must never stay hidden for reduced-motion users. */
+  .reveal {
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
+  .kb,
+  .kb-active {
+    transform: none !important;
+  }
 }

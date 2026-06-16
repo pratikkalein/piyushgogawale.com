@@ -26,9 +26,9 @@ export default async function DynamicPage({
   if (!page) notFound()
 
   return (
-    <article className="mx-auto max-w-[720px] px-6 py-16 lg:py-24">
-      <h1 className="font-display text-[52px] leading-tight text-ink">{page.title}</h1>
-      <div className="prose-editorial mt-8">
+    <article className="mx-auto max-w-[760px] px-6 py-20 lg:py-28">
+      <h1 className="hero-display text-ink">{page.title}</h1>
+      <div className="prose-editorial mt-10">
         {page.content && (
           <RichText data={page.content as unknown as SerializedEditorState} />
         )}

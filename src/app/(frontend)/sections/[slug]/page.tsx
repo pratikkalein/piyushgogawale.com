@@ -37,12 +37,15 @@ export default async function SectionPage({
     .filter((p): p is Photo => p !== null)
 
   return (
-    <article className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
-      <header className="mb-12 max-w-2xl">
-        <h1 className="font-display text-[52px] leading-tight text-ink lg:text-[64px]">
-          {section.title}
-        </h1>
-        {section.intro && <p className="mt-4 text-lg leading-relaxed text-slate">{section.intro}</p>}
+    <article className="mx-auto max-w-[1600px] px-6 py-20 lg:px-16 lg:py-28">
+      <header className="mb-14 border-b border-hairline pb-10">
+        <p className="label-caps text-steel">
+          Gallery · {photos.length} {photos.length === 1 ? 'Frame' : 'Frames'}
+        </p>
+        <h1 className="hero-display mt-5 max-w-[16ch] text-ink">{section.title}</h1>
+        {section.intro && (
+          <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-slate">{section.intro}</p>
+        )}
       </header>
 
       <Gallery photos={photos} />

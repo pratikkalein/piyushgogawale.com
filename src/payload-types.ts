@@ -254,6 +254,14 @@ export interface Page {
    * Auto-generated from the title. Leave blank to generate; edit to override.
    */
   slug?: string | null;
+  /**
+   * Optional opening statement shown large beneath the title (used by the About page layout).
+   */
+  lede?: string | null;
+  /**
+   * Optional portrait / lead image, shown alongside the text on the About page layout.
+   */
+  portrait?: (number | null) | Media;
   content?: {
     root: {
       type: string;
@@ -511,6 +519,8 @@ export interface SectionsSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  lede?: T;
+  portrait?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;

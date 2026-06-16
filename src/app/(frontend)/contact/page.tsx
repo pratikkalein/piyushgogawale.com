@@ -39,17 +39,14 @@ export default function ContactPage() {
   }
 
   return (
-    <section className="mx-auto max-w-[520px] px-6 py-16 lg:py-24">
-      <h1 className="font-display text-[52px] leading-tight text-ink">Get in touch</h1>
-      <p className="mt-3 text-slate">
+    <section className="mx-auto max-w-[560px] px-6 py-20 lg:py-28">
+      <p className="label-caps text-steel">Contact</p>
+      <h1 className="hero-display mt-4 text-ink">Get in touch</h1>
+      <p className="mt-6 max-w-[48ch] text-slate">
         For commissions, prints and collaborations. I’ll reply by email.
       </p>
 
-      <form
-        onSubmit={onSubmit}
-        className="mt-8 rounded-lg border border-beige-deep bg-cream p-8"
-        noValidate
-      >
+      <form onSubmit={onSubmit} className="mt-14" noValidate>
         {/* Honeypot field, visually hidden from real users */}
         <div className="absolute left-[-9999px]" aria-hidden="true">
           <label>
@@ -58,7 +55,7 @@ export default function ContactPage() {
           </label>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-9">
           <Field label="Name">
             <input
               name="name"
@@ -66,7 +63,8 @@ export default function ContactPage() {
               required
               maxLength={120}
               autoComplete="name"
-              className="h-11 rounded-md border border-hairline-strong bg-canvas px-3 text-ink outline-none focus:border-2 focus:border-primary"
+              placeholder="Your name"
+              className="field-underline"
             />
           </Field>
           <Field label="Email">
@@ -77,7 +75,8 @@ export default function ContactPage() {
               maxLength={200}
               autoComplete="email"
               inputMode="email"
-              className="h-11 rounded-md border border-hairline-strong bg-canvas px-3 text-ink outline-none focus:border-2 focus:border-primary"
+              placeholder="you@example.com"
+              className="field-underline"
             />
           </Field>
           <Field label="Message">
@@ -86,15 +85,12 @@ export default function ContactPage() {
               required
               rows={5}
               maxLength={4000}
-              className="rounded-md border border-hairline-strong bg-canvas p-3 text-ink outline-none focus:border-2 focus:border-primary"
+              placeholder="Tell me about your project"
+              className="field-underline resize-y"
             />
           </Field>
 
-          <button
-            type="submit"
-            disabled={status === 'submitting'}
-            className="mt-2 rounded-md bg-ink px-5 py-3 text-sm font-medium text-on-dark transition-opacity disabled:opacity-50"
-          >
+          <button type="submit" disabled={status === 'submitting'} className="btn btn-primary mt-2 self-start">
             {status === 'submitting' ? 'Sending…' : 'Send message'}
           </button>
 
@@ -102,12 +98,19 @@ export default function ContactPage() {
             {status === 'submitting' ? 'Sending your message' : ''}
           </p>
           {status === 'success' && (
-            <p role="status" aria-live="polite" className="text-sm font-medium text-primary">
-              Thanks — your message has been sent.
+            <p
+              role="status"
+              aria-live="polite"
+              className="flex items-center gap-2 font-medium text-ink"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+              Thanks — your message has been sent. I’ll reply by email.
             </p>
           )}
           {status === 'error' && (
-            <p role="alert" className="text-sm font-medium text-sunshine-900">
+            <p role="alert" className="text-sm font-medium" style={{ color: 'var(--color-error)' }}>
               {error}
             </p>
           )}
@@ -118,8 +121,8 @@ export default function ContactPage() {
 }
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <label className="flex flex-col gap-1.5">
-    <span className="text-sm font-medium text-charcoal">{label}</span>
+  <label className="flex flex-col gap-2">
+    <span className="label-caps text-steel">{label}</span>
     {children}
   </label>
 )

@@ -4,6 +4,7 @@ import React from 'react'
 
 import { getPayloadClient } from '@/lib/payload'
 import { mediaAlt, mediaSizeUrl, mediaUrl } from '@/lib/media'
+import { Reveal } from '@/components/Reveal'
 
 export const revalidate = 60
 
@@ -22,41 +23,41 @@ export default async function BlogIndex() {
     limit: 50,
   })
 
+  const count = result.docs.length
+
   return (
-    <section className="mx-auto max-w-[1280px] px-6 py-16 lg:px-8 lg:py-24">
-      <div className="mb-12">
-        <p className="text-xs font-semibold uppercase tracking-[1px] text-primary">Journal</p>
-        <h1 className="mt-2 font-display text-[52px] leading-tight text-ink">Blog</h1>
+    <section className="mx-auto max-w-[1600px] px-6 py-24 lg:px-16 lg:py-32">
+      <div className="flex items-end justify-between gap-6 border-b border-hairline-strong pb-6">
+        <h1 className="headline text-ink">Journal</h1>
+        <span className="label-caps shrink-0 pb-1 text-steel">
+          {count} {count === 1 ? 'Entry' : 'Entries'}
+        </span>
       </div>
 
-      {result.docs.length === 0 ? (
-        <p className="text-steel">No posts published yet.</p>
+      {count === 0 ? (
+        <p className="mt-12 text-steel">No posts published yet.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {result.docs.map((post) => {
+        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          {result.docs.map((post, i) => {
             const coverUrl = mediaSizeUrl(post.cover, 'card') ?? mediaUrl(post.cover)
             return (
-              <Link
-                key={post.id}
-                href={`/blog/${post.slug}`}
-                className="group flex flex-col overflow-hidden rounded-lg border border-hairline-soft bg-canvas transition-shadow hover:shadow-[var(--shadow-card)]"
-              >
+              <Reveal key={post.id} index={i % 3}>
+              <Link href={`/blog/${post.slug}`} className="group flex flex-col">
                 <div className="relative aspect-[3/2] w-full overflow-hidden bg-surface">
                   {coverUrl && (
                     <Image
                       src={coverUrl}
                       alt={mediaAlt(post.cover) || post.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="img-zoom object-cover"
                     />
                   )}
                 </div>
-                <div className="p-6">
-                  <h2 className="text-[22px] font-medium leading-snug text-ink">{post.title}</h2>
-                  <p className="mt-2 text-[13px] text-steel">{formatDate(post.date)}</p>
-                </div>
+                <p className="label-caps mt-5 text-steel">{formatDate(post.date)}</p>
+                <h2 className="mt-3 font-display text-[24px] leading-snug text-ink">{post.title}</h2>
               </Link>
+              </Reveal>
             )
           })}
         </div>

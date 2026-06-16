@@ -35,26 +35,28 @@ export default async function BlogPost({
   const coverUrl = mediaSizeUrl(post.cover, 'full') ?? mediaUrl(post.cover)
 
   return (
-    <article className="mx-auto max-w-[720px] px-6 py-16 lg:py-24">
+    <article className="mx-auto max-w-[760px] px-6 py-20 lg:py-28">
       <header>
-        <p className="text-[13px] text-steel">{formatDate(post.date)}</p>
-        <h1 className="mt-2 font-display text-[52px] leading-tight text-ink">{post.title}</h1>
+        <p className="label-caps text-steel">{formatDate(post.date)}</p>
+        <h1 className="mt-4 font-display text-[clamp(2.25rem,1.5rem+3vw,3.5rem)] font-bold leading-[1.1] tracking-[-0.02em] text-ink">
+          {post.title}
+        </h1>
       </header>
 
       {coverUrl && (
-        <div className="relative mt-8 aspect-[3/2] w-full overflow-hidden rounded-lg shadow-[var(--shadow-image)]">
+        <div className="relative mt-10 aspect-[3/2] w-full overflow-hidden bg-surface">
           <Image
             src={coverUrl}
             alt={mediaAlt(post.cover) || post.title}
             fill
-            sizes="720px"
+            sizes="760px"
             className="object-cover"
             priority
           />
         </div>
       )}
 
-      <div className="prose-editorial mt-10">
+      <div className="prose-editorial mt-12">
         {post.body && <RichText data={post.body as unknown as SerializedEditorState} />}
       </div>
     </article>

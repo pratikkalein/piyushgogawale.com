@@ -5,6 +5,7 @@ import { getPayloadClient } from '@/lib/payload'
 import { mediaAlt, mediaSizeUrl, mediaUrl } from '@/lib/media'
 import { Carousel, type Slide } from '@/components/Carousel'
 import { SectionCard } from '@/components/SectionCard'
+import { Reveal } from '@/components/Reveal'
 
 export const revalidate = 60
 
@@ -36,59 +37,57 @@ export default async function HomePage() {
     })
     .filter((s): s is Slide => s !== null)
 
+  const count = all.docs.length
+
   return (
     <>
       {slides.length > 0 ? (
         <Carousel slides={slides} />
       ) : (
-        <section className="flex h-[60vh] items-center justify-center bg-surface px-6 text-center">
+        <section className="flex min-h-[60vh] items-center bg-canvas px-6 py-24 lg:px-16">
           <div>
             <h1 className="hero-display text-ink">Piyush Gogawale</h1>
-            <p className="mt-4 text-steel">
+            <p className="mt-5 max-w-[48ch] text-steel">
               Mark a gallery section as <em>featured</em> in the admin to fill this carousel.
             </p>
           </div>
         </section>
       )}
 
-      <section id="work" className="mx-auto max-w-[1280px] scroll-mt-20 px-6 py-24 lg:px-8">
-        <div className="mb-12">
-          <p className="text-xs font-semibold uppercase tracking-[1px] text-primary">Galleries</p>
-          <h2 className="mt-2 font-display text-[52px] leading-tight text-ink">Selected work</h2>
+      <section id="work" className="mx-auto max-w-[1600px] scroll-mt-24 px-6 py-24 lg:px-16 lg:py-32">
+        <div className="flex items-end justify-between gap-6 border-b border-hairline-strong pb-6">
+          <h2 className="headline text-ink">Selected Work</h2>
+          <span className="label-caps shrink-0 pb-1 text-steel">
+            {count} {count === 1 ? 'Gallery' : 'Galleries'}
+          </span>
         </div>
 
-        {all.docs.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {all.docs.map((s) => (
-              <SectionCard
-                key={s.id}
-                slug={s.slug ?? ''}
-                title={s.title}
-                intro={s.intro}
-                coverUrl={mediaSizeUrl(s.cover, 'card') ?? mediaUrl(s.cover)}
-                alt={mediaAlt(s.cover) || s.title}
-              />
+        {count > 0 ? (
+          <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {all.docs.map((s, i) => (
+              <Reveal key={s.id} index={i % 3}>
+                <SectionCard
+                  slug={s.slug ?? ''}
+                  title={s.title}
+                  intro={s.intro}
+                  coverUrl={mediaSizeUrl(s.cover, 'card') ?? mediaUrl(s.cover)}
+                  alt={mediaAlt(s.cover) || s.title}
+                />
+              </Reveal>
             ))}
           </div>
         ) : (
-          <p className="text-steel">No gallery sections yet.</p>
+          <p className="mt-12 text-steel">No gallery sections yet.</p>
         )}
       </section>
 
-      {/* cta-banner-cream */}
-      <section className="mx-auto max-w-[1280px] px-6 pb-24 lg:px-8">
-        <div className="rounded-lg bg-cream px-8 py-16 text-center">
-          <h2 className="font-display text-[52px] leading-tight text-ink">Let’s work together</h2>
-          <p className="mx-auto mt-3 max-w-md text-slate">
-            Commissions, prints and collaborations — get in touch.
-          </p>
-          <Link
-            href="/contact"
-            className="mt-8 inline-flex rounded-md bg-ink px-5 py-2.5 text-sm font-medium text-on-dark"
-          >
-            Get in touch
-          </Link>
-        </div>
+      {/* Drenched-black closing call to action */}
+      <section className="bg-ink px-6 py-28 text-center lg:px-16 lg:py-36">
+        <h2 className="hero-display text-on-dark">Let&rsquo;s work together</h2>
+        <p className="label-caps mt-6 text-on-dark/60">Commissions · Prints · Collaborations</p>
+        <Link href="/contact" className="btn btn-invert mt-10">
+          Get in touch
+        </Link>
       </section>
     </>
   )
