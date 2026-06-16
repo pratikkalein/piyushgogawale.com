@@ -5,6 +5,8 @@ import React, { useState } from 'react'
 import Lightbox from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
 
+import { Reveal } from '@/components/Reveal'
+
 export type Photo = {
   url: string
   thumbUrl: string
@@ -22,23 +24,24 @@ export const Gallery = ({ photos }: { photos: Photo[] }) => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
         {photos.map((photo, i) => (
-          <button
-            key={photo.url + i}
-            type="button"
-            onClick={() => setIndex(i)}
-            aria-label={`Open photo ${i + 1}`}
-            className="group relative aspect-square overflow-hidden rounded-lg bg-surface"
-          >
-            <Image
-              src={photo.thumbUrl}
-              alt={photo.alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-            />
-          </button>
+          <Reveal key={photo.url + i} index={i % 3}>
+            <button
+              type="button"
+              onClick={() => setIndex(i)}
+              aria-label={`Open photo ${i + 1}`}
+              className="group relative aspect-square w-full overflow-hidden bg-surface"
+            >
+              <Image
+                src={photo.thumbUrl}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 768px) 50vw, 33vw"
+                className="img-zoom object-cover"
+              />
+            </button>
+          </Reveal>
         ))}
       </div>
 
@@ -53,7 +56,7 @@ export const Gallery = ({ photos }: { photos: Photo[] }) => {
           height: p.height,
           description: p.alt,
         }))}
-        styles={{ container: { backgroundColor: 'rgba(0,0,0,0.92)' } }}
+        styles={{ container: { backgroundColor: 'rgba(0,0,0,0.95)' } }}
       />
     </>
   )

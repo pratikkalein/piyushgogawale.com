@@ -5,9 +5,12 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterC
  * CMS content appear on the public site without a redeploy. The dynamic import
  * + try/catch keeps the Payload CLI (migrations) working outside Next's runtime.
  */
-const revalidate = async (paths: string[]) => {
+const revalidate = async (paths: string[], layout = false) => {
   try {
     const { revalidatePath } = await import('next/cache')
+    // The sidebar + footer (nav, gallery sections, wordmark, social) live in
+    // the shared root layout, so global content must revalidate every page.
+    if (layout) revalidatePath('/', 'layout')
     for (const p of paths) revalidatePath(p)
   } catch {
     // Not running inside the Next.js request context (e.g. CLI) — ignore.
@@ -15,11 +18,11 @@ const revalidate = async (paths: string[]) => {
 }
 
 export const revalidateSections: CollectionAfterChangeHook = async ({ doc }) => {
-  await revalidate(['/', `/sections/${doc?.slug}`])
+  await revalidate([`/sections/${doc?.slug}`], true)
   return doc
 }
 export const revalidateSectionsDelete: CollectionAfterDeleteHook = async ({ doc }) => {
-  await revalidate(['/', `/sections/${doc?.slug}`])
+  await revalidate([`/sections/${doc?.slug}`], true)
   return doc
 }
 
@@ -42,6 +45,6 @@ export const revalidateBlogDelete: CollectionAfterDeleteHook = async ({ doc }) =
 }
 
 export const revalidateSettings: GlobalAfterChangeHook = async ({ doc }) => {
-  await revalidate(['/'])
+  await revalidate([], true)
   return doc
 }

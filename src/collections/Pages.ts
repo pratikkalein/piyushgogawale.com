@@ -29,6 +29,23 @@ export const Pages: CollectionConfig = {
     },
     slugField('title'),
     {
+      name: 'lede',
+      type: 'textarea',
+      admin: {
+        description:
+          'Optional opening statement shown large beneath the title (used by the About page layout).',
+      },
+    },
+    {
+      name: 'portrait',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Optional portrait / lead image, shown alongside the text on the About page layout.',
+      },
+    },
+    {
       name: 'content',
       type: 'richText',
     },
