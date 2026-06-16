@@ -44,7 +44,7 @@ export default async function HomePage() {
       {slides.length > 0 ? (
         <Carousel slides={slides} />
       ) : (
-        <section className="flex min-h-[60vh] items-center bg-canvas px-6 py-24 lg:px-16">
+        <section className="flex min-h-[60dvh] items-center bg-canvas px-6 py-24 lg:px-16">
           <div>
             <h1 className="hero-display text-ink">Piyush Gogawale</h1>
             <p className="mt-5 max-w-[48ch] text-steel">
